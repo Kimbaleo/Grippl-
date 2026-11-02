@@ -53,13 +53,13 @@
     background: var(--flaeche);
     border: 1px solid var(--linie);
     border-radius: 20px;
-    padding: 80px 32px 32px;
+    padding: 68px 32px 32px;
     margin-top: 40px;
     position: relative;
   }
 
-  /* Überschrift auf dem Rand: Buchstaben wechseln zwischen außen (blau)
-     und innen (weiß mit blauer Kontur) – wie die weiß-blauen Rauten */
+  /* Überschrift auf dem Rand: alle Buchstaben sitzen mittig auf der Linie,
+     im Wechsel blau und weiß mit blauer Kontur – wie die weiß-blauen Rauten */
   .titel {
     position: absolute;
     top: 0;
@@ -75,13 +75,11 @@
   .titel span { display: inline-block; }
   .titel .aussen {
     color: var(--blau);
-    transform: translateY(-24%);
   }
   .titel .innen {
     color: #ffffff;
     -webkit-text-stroke: 2.5px var(--blau);
     paint-order: stroke fill;
-    transform: translateY(24%);
   }
 
   /* Schieberegler Mann / Frau */
@@ -202,7 +200,7 @@
     .los, .regler .knopf, .regler label { transition: none; }
   }
   @media (max-width: 420px) {
-    .karte { padding: 76px 20px 24px; }
+    .karte { padding: 64px 20px 24px; }
     .titel { left: 20px; }
   }
 </style>
