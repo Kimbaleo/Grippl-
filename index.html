@@ -2,8 +2,17 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Grippl</title>
+<!-- Als App auf dem iPhone-Home-Bildschirm -->
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Grippl">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f1216" media="(prefers-color-scheme: dark)">
 <meta name="description" content="Per Knopfdruck a bayerisches Schimpfwort – mit preißischer Übersetzung.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -37,14 +46,29 @@
 
   body {
     min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 40px 20px;
+    padding:
+      max(40px, env(safe-area-inset-top))
+      max(20px, env(safe-area-inset-right))
+      max(40px, env(safe-area-inset-bottom))
+      max(20px, env(safe-area-inset-left));
     font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
     background: var(--bg);
     color: var(--text);
     -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+  button {
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .aktionen {
+    display: flex;
+    gap: 20px;
   }
 
   .karte {
@@ -221,7 +245,10 @@
     <div class="ausgabe" aria-live="polite">
       <p id="ausdruck" class="ausdruck leer">Grantla</p>
       <p id="preissn" class="preissn">Druck auf'n Knopf.</p>
-      <div><button id="kopiern" class="kopiern" type="button" hidden>Kopiern</button></div>
+      <div class="aktionen">
+        <button id="kopiern" class="kopiern" type="button" hidden>Kopiern</button>
+        <button id="teilen" class="kopiern" type="button" hidden>Teilen</button>
+      </div>
     </div>
 
     <button id="los" class="los" type="button">Schimpf!</button>
@@ -302,6 +329,8 @@
   const ausdruckEl = document.getElementById("ausdruck");
   const preissnEl = document.getElementById("preissn");
   const kopiernEl = document.getElementById("kopiern");
+  const teilenEl = document.getElementById("teilen");
+  let letzteUebersetzung = "";
   let letzter = "";
 
   function schimpf() {
@@ -322,9 +351,11 @@
     void ausdruckEl.offsetWidth; // Animation neu starten
     ausdruckEl.classList.add("neu");
 
-    preissnEl.textContent = `preißisch: ${adj[1]} + ${wort[2]}`;
+    letzteUebersetzung = `${adj[1]} + ${wort[2]}`;
+    preissnEl.textContent = `preißisch: ${letzteUebersetzung}`;
     kopiernEl.hidden = false;
     kopiernEl.textContent = "Kopiern";
+    teilenEl.hidden = !navigator.share;
   }
 
   document.getElementById("los").addEventListener("click", schimpf);
@@ -333,6 +364,18 @@
   document.querySelectorAll('input[name="fuer"]').forEach((r) =>
     r.addEventListener("change", () => { if (letzter) schimpf(); })
   );
+
+  // Teilen über das iPhone-Menü (WhatsApp, Nachrichten …)
+  teilenEl.addEventListener("click", async () => {
+    try {
+      await navigator.share({ text: `${ausdruckEl.textContent} 🥨 (preißisch: ${letzteUebersetzung})` });
+    } catch { /* abgebrochen */ }
+  });
+
+  // Offline-Fähigkeit (nur über http/https, nicht bei file://)
+  if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+    navigator.serviceWorker.register("sw.js");
+  }
 
   kopiernEl.addEventListener("click", async () => {
     try {
