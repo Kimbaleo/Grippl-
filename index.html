@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grippl – Da bayerische Schimpfwort-Generator</title>
+<meta name="description" content="Per Knopfdruck a zünftige bayerische Beschimpfung – mit Übersetzung für Preißn.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --weiss-blau: #0a6ebd;
+    --blau-dunkel: #0b3d6e;
+    --papier: #fbf6e9;
+    --holz: #7a4a23;
+    --holz-dunkel: #4e2d12;
+    --brezn: #b5651d;
+    --bier: #f2b632;
+    --text: #2b1d10;
+    --rauten: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='48' viewBox='0 0 28 48'%3E%3Crect width='28' height='48' fill='%23ffffff'/%3E%3Cpath d='M14 0 L28 24 L14 48 L0 24 Z' fill='%230a6ebd'/%3E%3C/svg%3E");
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body { margin: 0; }
+
+  body {
+    min-height: 100vh;
+    font-family: "Lora", Georgia, serif;
+    color: var(--text);
+    /* Biergarten-Tischdecke: blau-weiß kariert */
+    background-color: #ffffff;
+    background-image:
+      linear-gradient(90deg, rgba(10,110,189,.18) 50%, transparent 50%),
+      linear-gradient(rgba(10,110,189,.18) 50%, transparent 50%);
+    background-size: 40px 40px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .rauten {
+    height: 48px;
+    background: var(--rauten) repeat-x center / 28px 48px;
+    border-block: 4px solid var(--blau-dunkel);
+    flex: none;
+  }
+
+  main {
+    overflow-x: clip;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 16px;
+  }
+
+  .tafel {
+    width: 100%;
+    max-width: 620px;
+    background: var(--papier);
+    border: 10px solid var(--holz);
+    border-radius: 14px;
+    outline: 3px solid var(--holz-dunkel);
+    box-shadow: 0 18px 40px rgba(0,0,0,.25), inset 0 0 40px rgba(122,74,35,.12);
+    padding: 28px 24px 24px;
+    text-align: center;
+    position: relative;
+  }
+
+  .tafel::before,
+  .tafel::after {
+    content: "🥨";
+    position: absolute;
+    top: -26px;
+    font-size: 40px;
+    filter: drop-shadow(0 3px 2px rgba(0,0,0,.3));
+  }
+  .tafel::before { left: -20px; transform: rotate(-18deg); }
+  .tafel::after  { right: -20px; transform: rotate(18deg); }
+
+  h1 {
+    font-family: "UnifrakturMaguntia", "Old English Text MT", serif;
+    font-weight: 400;
+    font-size: clamp(2.6rem, 9vw, 3.8rem);
+    line-height: 1;
+    margin: 4px 0 4px;
+    color: var(--blau-dunkel);
+    text-shadow: 2px 2px 0 rgba(10,110,189,.18);
+  }
+
+  .untertitel {
+    margin: 0 0 22px;
+    font-style: italic;
+    color: var(--holz);
+  }
+
+  .zierlinie {
+    height: 10px;
+    margin: 0 auto 22px;
+    width: 70%;
+    background: var(--rauten) repeat-x center / 6px 10px;
+    border-radius: 2px;
+  }
+
+  label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    max-width: 360px;
+    font: inherit;
+    font-size: 1.1rem;
+    padding: 10px 14px;
+    border: 2px solid var(--holz);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--text);
+    text-align: center;
+  }
+  input[type="text"]:focus {
+    outline: 3px solid var(--weiss-blau);
+    outline-offset: 2px;
+  }
+
+  .knopf {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+    font-family: "UnifrakturMaguntia", serif;
+    font-size: 1.7rem;
+    padding: 12px 28px;
+    border: 3px solid var(--holz-dunkel);
+    border-radius: 999px;
+    color: var(--text);
+    background: linear-gradient(#ffe08a, var(--bier) 55%, #d99413);
+    box-shadow: 0 6px 0 var(--holz-dunkel), 0 10px 18px rgba(0,0,0,.25);
+    cursor: pointer;
+    transition: transform .08s, box-shadow .08s;
+  }
+  .knopf:hover { filter: brightness(1.05); }
+  .knopf:active {
+    transform: translateY(5px);
+    box-shadow: 0 1px 0 var(--holz-dunkel), 0 4px 8px rgba(0,0,0,.25);
+  }
+  .knopf:focus-visible {
+    outline: 3px solid var(--weiss-blau);
+    outline-offset: 4px;
+  }
+  .knopf .krug { font-family: system-ui, sans-serif; font-size: 1.5rem; }
+
+  .ergebnis {
+    margin-top: 28px;
+    min-height: 120px;
+    padding: 20px 18px;
+    border: 2px dashed var(--brezn);
+    border-radius: 10px;
+    background: #fffdf6;
+  }
+
+  .schimpf {
+    font-size: clamp(1.25rem, 4.5vw, 1.6rem);
+    font-weight: 600;
+    line-height: 1.35;
+    margin: 0;
+    color: var(--blau-dunkel);
+  }
+  .schimpf.leer {
+    font-weight: 400;
+    font-style: italic;
+    color: #8a7a66;
+    font-size: 1.1rem;
+  }
+  .schimpf.neu { animation: wackln .45s ease-out; }
+
+  @keyframes wackln {
+    0%   { transform: scale(.85) rotate(-3deg); opacity: 0; }
+    60%  { transform: scale(1.05) rotate(1.5deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0); }
+  }
+
+  .preissn {
+    margin: 14px 0 0;
+    font-size: .95rem;
+    color: #5c4630;
+  }
+  .preissn strong { color: var(--holz); }
+
+  .aktionen {
+    margin-top: 14px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .klein {
+    font: inherit;
+    font-size: .9rem;
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 2px solid var(--weiss-blau);
+    background: #fff;
+    color: var(--blau-dunkel);
+    cursor: pointer;
+  }
+  .klein:hover { background: #e8f2fb; }
+  .klein[hidden] { display: none; }
+
+  footer {
+    text-align: center;
+    padding: 10px 16px 14px;
+    font-size: .85rem;
+    color: var(--blau-dunkel);
+    background: rgba(255,255,255,.85);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .schimpf.neu { animation: none; }
+    .knopf { transition: none; }
+  }
+</style>
+</head>
+<body>
+  <div class="rauten" aria-hidden="true"></div>
+
+  <main>
+    <section class="tafel">
+      <h1>Grippl</h1>
+      <p class="untertitel">Da bayerische Schimpfwort-Generator – frisch zapft!</p>
+      <div class="zierlinie" aria-hidden="true"></div>
+
+      <label for="name">Wen mog ma heid beschimpfa?</label>
+      <input id="name" type="text" placeholder="Name (z. B. Sepp)" autocomplete="off" maxlength="40">
+
+      <div>
+        <button id="los" class="knopf" type="button">
+          <span class="krug" aria-hidden="true">🍺</span> Schimpf!
+        </button>
+      </div>
+
+      <div class="ergebnis" aria-live="polite">
+        <p id="schimpf" class="schimpf leer">Druck auf'n Knopf, dann kriagst wos z'hörn …</p>
+        <p id="preissn" class="preissn" hidden></p>
+        <div class="aktionen">
+          <button id="kopiern" class="klein" type="button" hidden>📋 Kopiern</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Ois nur a Gaudi – ned bös gmoant! · Mia san mia.
+  </footer>
+  <div class="rauten" aria-hidden="true"></div>
+
+<script>
+  // Eigenschaftswörter: Stamm + Endung je nach Geschlecht (m: -a, w: -e, s: -s)
+  const adjektive = [
+    ["damisch", "dämlich"],
+    ["bläd", "blöd"],
+    ["greislich", "scheußlich"],
+    ["hinterfotzig", "hinterhältig"],
+    ["gscheart", "ungehobelt"],
+    ["narrisch", "verrückt"],
+    ["schiach", "hässlich"],
+    ["letschert", "lasch"],
+    ["gwampert", "dickbäuchig"],
+    ["zaundürr", "spindeldürr"],
+    ["ausgschamt", "unverschämt"],
+    ["grantig", "schlecht gelaunt"],
+    ["neidig", "neidisch"],
+    ["hirnrissig", "hirnverbrannt"],
+    ["rotzfrech", "frech"],
+    ["verzogn", "unerzogen"],
+    ["bsuffn", "betrunken"],
+    ["oglatscht", "ungepflegt"],
+    ["gschleckt", "geschniegelt"],
+    ["gschupft", "überspannt"],
+  ];
+
+  // Hauptwörter mit Geschlecht und Übersetzung
+  const hauptwoerter = [
+    ["Depp", "m", "Dummkopf"],
+    ["Hirnbaatzl", "m", "Hirnloser"],
+    ["Grattler", "m", "Asozialer, Habenichts"],
+    ["Bazi", "m", "Schlitzohr"],
+    ["Haumdaucher", "m", "Draufgänger, Rüpel"],
+    ["Hornochs", "m", "Hornochse"],
+    ["Schofsbeidl", "m", "Schafsbeutel, Trottel"],
+    ["Lackl", "m", "grober Kerl"],
+    ["Doldi", "m", "Trottel"],
+    ["Hanswurscht", "m", "Hanswurst"],
+    ["Dampfplauderer", "m", "Schwätzer"],
+    ["Gschaftlhuaba", "m", "Wichtigtuer"],
+    ["Saubeidl", "m", "Mistkerl"],
+    ["Rotzleffe", "m", "Rotzlöffel"],
+    ["Bierdimpfe", "m", "Biertrinker ohne Hirn"],
+    ["Hammeldepp", "m", "Volltrottel"],
+    ["Krautschädl", "m", "Dickkopf"],
+    ["Simpe", "m", "Einfaltspinsel"],
+    ["Zwiderwurzn", "w", "Griesgram"],
+    ["Ratschkathl", "w", "Tratschtante"],
+    ["Bissgurkn", "w", "zänkische Person"],
+    ["Funsn", "w", "eingebildete Ziege"],
+    ["Trutschn", "w", "Trampel"],
+    ["Schnepfn", "w", "dumme Gans"],
+    ["Hupfdohln", "w", "Zappelphilipp"],
+    ["Sumpfbiaschn", "w", "Sumpfbürste, Kneipenhocker"],
+    ["Rindviech", "s", "Rindvieh"],
+    ["Gscheidhaferl", "s", "Besserwisser"],
+    ["Mistviech", "s", "Mistvieh"],
+    ["Krischperl", "s", "Schwächling"],
+    ["Hascherl", "s", "armes Würstchen"],
+    ["Fleischpflanzerl", "s", "Frikadelle (auf zwei Haxn)"],
+    ["Oaschgsicht", "s", "Arschgesicht"],
+    ["Bürscherl", "s", "Bürschchen"],
+  ];
+
+  const endung = { m: "a", w: "e", s: "s" };
+
+  // Satzvorlagen: {n} = Name, {b} = Beschimpfung (Adjektiv + Hauptwort)
+  const mitName = [
+    "{n}, du {b}!",
+    "Jetzt schaug di o, {n}, du {b}!",
+    "{n}, du bist so a {b}, des glaabt ma koana!",
+    "Geh weida, {n}, du {b}!",
+    "Ja Kruzifix, {n}! Du {b}, du {b2}!",
+    "Mei, {n} … a so a {b}!",
+    "Herrgottsakra, {n}, du bist doch a {b}!",
+    "{n}, du {b}, schleich di!",
+  ];
+  const ohneName = [
+    "Du {b}!",
+    "Jetzt schaug di o, du {b}!",
+    "Du bist so a {b}, des glaabt ma koana!",
+    "Geh weida, du {b}!",
+    "Ja Kruzifix! Du {b}, du {b2}!",
+    "Mei … a so a {b}!",
+    "Herrgottsakra, du bist doch a {b}!",
+    "Du {b}, schleich di!",
+  ];
+
+  const nachsatz = [
+    "",
+    "",
+    " Schleich di!",
+    " Hau di über d'Häuser!",
+    " Bei dir is Hopfn und Malz verlorn.",
+    " Di ko ma ned amoi zum Brezn-Hoin schicka.",
+    " Du bist doch ned ganz sauba!",
+    " Schaug, dass d' Land gwinnst!",
+    " Du hosd doch an Vogl!",
+    " Da legst di nieda!",
+  ];
+
+  const zufall = (liste) => liste[Math.floor(Math.random() * liste.length)];
+
+  function beschimpfung() {
+    const [stamm, adjUeb] = zufall(adjektive);
+    const [wort, geschlecht, wortUeb] = zufall(hauptwoerter);
+    return {
+      text: `${stamm}${endung[geschlecht]} ${wort}`,
+      wort, wortUeb, stamm, adjUeb,
+    };
+  }
+
+  const schimpfEl = document.getElementById("schimpf");
+  const preissnEl = document.getElementById("preissn");
+  const kopiernEl = document.getElementById("kopiern");
+  const nameEl = document.getElementById("name");
+  let letzter = "";
+
+  function schimpf() {
+    const name = nameEl.value.trim();
+    let satz, b1, b2;
+    do {
+      b1 = beschimpfung();
+      do { b2 = beschimpfung(); } while (b2.wort === b1.wort);
+      const vorlage = zufall(name ? mitName : ohneName);
+      satz = vorlage
+        .replaceAll("{n}", name)
+        .replace("{b}", b1.text)
+        .replace("{b2}", b2.text);
+      if (!vorlage.includes("{b2}")) b2 = null;
+      if (!satz.includes("schleich di")) satz += zufall(nachsatz);
+    } while (satz === letzter);
+    letzter = satz;
+
+    schimpfEl.textContent = satz;
+    schimpfEl.classList.remove("leer", "neu");
+    void schimpfEl.offsetWidth; // Animation neu starten
+    schimpfEl.classList.add("neu");
+
+    const erklaer = [b1, b2].filter(Boolean)
+      .map((b) => `<strong>${b.stamm}</strong> = ${b.adjUeb}, <strong>${b.wort}</strong> = ${b.wortUeb}`)
+      .join(" · ");
+    preissnEl.innerHTML = `Fürs Preißn übersetzt: ${erklaer}`;
+    preissnEl.hidden = false;
+    kopiernEl.hidden = false;
+    kopiernEl.textContent = "📋 Kopiern";
+  }
+
+  document.getElementById("los").addEventListener("click", schimpf);
+  nameEl.addEventListener("keydown", (e) => { if (e.key === "Enter") schimpf(); });
+
+  kopiernEl.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(schimpfEl.textContent);
+      kopiernEl.textContent = "✔ Kopiert!";
+    } catch {
+      kopiernEl.textContent = "Ging ned – markier's händisch";
+    }
+  });
+</script>
+</body>
+</html>
