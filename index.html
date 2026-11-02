@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Grippl</title>
-<meta name="description" content="Per Knopfdruck a bayerisches Schimpfwort – mit Übersetzung für Preißn.">
+<meta name="description" content="Per Knopfdruck a bayerisches Schimpfwort – mit preißischer Übersetzung.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
@@ -38,38 +38,13 @@
   body {
     min-height: 100vh;
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
     font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
     background: var(--bg);
     color: var(--text);
     -webkit-font-smoothing: antialiased;
-  }
-
-  header, footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 16px;
-    max-width: 720px;
-    width: 100%;
-    margin: 0 auto;
-    padding: 24px 20px;
-    font-size: .875rem;
-    color: var(--leise);
-  }
-  header strong {
-    color: var(--text);
-    font-weight: 800;
-    letter-spacing: -.02em;
-    font-size: 1rem;
-  }
-
-  main {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 16px 20px 40px;
   }
 
   .karte {
@@ -81,30 +56,14 @@
     padding: 40px 32px 32px;
   }
 
-  .zitat {
-    margin: 0 0 32px;
-    font-size: .95rem;
-    color: var(--leise);
-  }
-  .zitat::before { content: "„"; }
-  .zitat::after  { content: "“"; }
-
   .ausgabe {
-    min-height: 148px;
+    min-height: 140px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     border-left: 3px solid var(--blau);
     padding: 4px 0 4px 20px;
     margin-bottom: 32px;
-  }
-  .fuer {
-    margin: 0 0 6px;
-    font-size: .8rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: .08em;
-    color: var(--leise);
   }
   .ausdruck {
     margin: 0;
@@ -126,27 +85,6 @@
     color: var(--leise);
   }
 
-  .zeile {
-    display: flex;
-    gap: 10px;
-  }
-  input {
-    flex: 1;
-    min-width: 0;
-    font: inherit;
-    font-size: 1rem;
-    padding: 14px 16px;
-    border: 1px solid var(--linie);
-    border-radius: 12px;
-    background: var(--bg);
-    color: var(--text);
-  }
-  input::placeholder { color: var(--leise); }
-  input:focus, button:focus-visible {
-    outline: 2px solid var(--blau);
-    outline-offset: 2px;
-  }
-
   button {
     font: inherit;
     font-weight: 700;
@@ -154,14 +92,19 @@
     border-radius: 12px;
     cursor: pointer;
   }
+  button:focus-visible {
+    outline: 2px solid var(--blau);
+    outline-offset: 2px;
+  }
   .los {
+    width: 100%;
     padding: 14px 24px;
     background: var(--blau);
     color: var(--auf-blau);
     transition: background .15s, transform .1s;
   }
   .los:hover { background: var(--blau-hover); }
-  .los:active { transform: scale(.97); }
+  .los:active { transform: scale(.98); }
 
   .kopiern {
     margin-top: 14px;
@@ -179,38 +122,19 @@
   }
   @media (max-width: 420px) {
     .karte { padding: 28px 20px 24px; }
-    .zeile { flex-direction: column; }
   }
 </style>
 </head>
 <body>
-  <header>
-    <strong>Grippl</strong>
-    <span>Mia san mia.</span>
-  </header>
+  <main class="karte">
+    <div class="ausgabe" aria-live="polite">
+      <p id="ausdruck" class="ausdruck leer">Grantla</p>
+      <p id="preissn" class="preissn">Druck auf'n Knopf.</p>
+      <div><button id="kopiern" class="kopiern" type="button" hidden>Kopiern</button></div>
+    </div>
 
-  <main>
-    <section class="karte">
-      <p id="zitat" class="zitat">Schaun ma moi, dann seng ma scho.</p>
-
-      <div class="ausgabe" aria-live="polite">
-        <p id="fuer" class="fuer" hidden></p>
-        <p id="ausdruck" class="ausdruck leer">Grantla</p>
-        <p id="preissn" class="preissn">Druck auf'n Knopf.</p>
-        <div><button id="kopiern" class="kopiern" type="button" hidden>Kopiern</button></div>
-      </div>
-
-      <div class="zeile">
-        <input id="name" type="text" placeholder="Wer is dran?" aria-label="Name" autocomplete="off" maxlength="40">
-        <button id="los" class="los" type="button">Schimpf!</button>
-      </div>
-    </section>
+    <button id="los" class="los" type="button">Schimpf!</button>
   </main>
-
-  <footer>
-    <span>Ois nur a Gaudi.</span>
-    <span>Passt scho.</span>
-  </footer>
 
 <script>
   // Eigenschaftswörter: Stamm + Endung je nach Geschlecht (m: -a, w: -e, s: -s)
@@ -277,29 +201,12 @@
 
   const endung = { m: "a", w: "e", s: "s" };
 
-  // Bayerische Redewendungen, die oben wechseln
-  const zitate = [
-    "Schaun ma moi, dann seng ma scho.",
-    "Wer ko, der ko.",
-    "A bisserl wos geht oiwei.",
-    "Des basst scho.",
-    "Ned gschimpft is globt gnua.",
-    "Do legst di nieda.",
-    "Wos mi ned brennt, des blas i ned.",
-    "Mia ham's ned eilig.",
-    "Jetzt is scho wieder wos passiert.",
-  ];
-
   const zufall = (liste) => liste[Math.floor(Math.random() * liste.length)];
 
-  const el = (id) => document.getElementById(id);
-  const ausdruckEl = el("ausdruck");
-  const fuerEl = el("fuer");
-  const preissnEl = el("preissn");
-  const kopiernEl = el("kopiern");
-  const zitatEl = el("zitat");
-  const nameEl = el("name");
-  let letzter = "", letztesZitat = zitatEl.textContent;
+  const ausdruckEl = document.getElementById("ausdruck");
+  const preissnEl = document.getElementById("preissn");
+  const kopiernEl = document.getElementById("kopiern");
+  let letzter = "";
 
   function schimpf() {
     let ausdruck, adj, wort;
@@ -316,27 +223,16 @@
     void ausdruckEl.offsetWidth; // Animation neu starten
     ausdruckEl.classList.add("neu");
 
-    const name = nameEl.value.trim();
-    fuerEl.hidden = !name;
-    fuerEl.textContent = name ? `Für ${name}` : "";
-
-    preissnEl.textContent = `Fürs Preißn: ${adj[1]} + ${wort[2]}`;
+    preissnEl.textContent = `preißisch: ${adj[1]} + ${wort[2]}`;
     kopiernEl.hidden = false;
     kopiernEl.textContent = "Kopiern";
-
-    let z;
-    do { z = zufall(zitate); } while (z === letztesZitat);
-    zitatEl.textContent = letztesZitat = z;
   }
 
-  el("los").addEventListener("click", schimpf);
-  nameEl.addEventListener("keydown", (e) => { if (e.key === "Enter") schimpf(); });
+  document.getElementById("los").addEventListener("click", schimpf);
 
   kopiernEl.addEventListener("click", async () => {
-    const name = nameEl.value.trim();
-    const text = name ? `${name}: ${ausdruckEl.textContent}` : ausdruckEl.textContent;
     try {
-      await navigator.clipboard.writeText(text);
+      await navigator.clipboard.writeText(ausdruckEl.textContent);
       kopiernEl.textContent = "Kopiert ✓";
     } catch {
       kopiernEl.textContent = "Ging ned – bitte händisch markiern";
