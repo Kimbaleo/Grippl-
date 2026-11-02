@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Grippl</title>
+<!-- Als App auf dem iPhone-Home-Bildschirm -->
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Grippl">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f1216" media="(prefers-color-scheme: dark)">
+<meta name="description" content="Per Knopfdruck a bayerisches Schimpfwort – mit preißischer Übersetzung.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f8fa;
+    --flaeche: #ffffff;
+    --text: #14181f;
+    --leise: #6b7280;
+    --linie: #e5e7eb;
+    --blau: #0060b0;
+    --blau-hover: #004f91;
+    --auf-blau: #ffffff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f1216;
+      --flaeche: #171b21;
+      --text: #f1f3f5;
+      --leise: #9aa3ad;
+      --linie: #2a3038;
+      --blau: #4a9be0;
+      --blau-hover: #6aaeea;
+      --auf-blau: #0b1a2b;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+
+  body {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding:
+      max(40px, env(safe-area-inset-top))
+      max(20px, env(safe-area-inset-right))
+      max(40px, env(safe-area-inset-bottom))
+      max(20px, env(safe-area-inset-left));
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+  button {
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .aktionen {
+    display: flex;
+    gap: 20px;
+  }
+
+  .karte {
+    width: 100%;
+    max-width: 560px;
+    background: var(--flaeche);
+    border: 1px solid var(--linie);
+    border-radius: 20px;
+    padding: 68px 32px 32px;
+    margin-top: 40px;
+    position: relative;
+  }
+
+  /* Überschrift auf dem Rand: alle Buchstaben sitzen mittig auf der Linie,
+     im Wechsel blau und weiß mit blauer Kontur – wie die weiß-blauen Rauten */
+  .titel {
+    position: absolute;
+    top: 0;
+    left: 32px;
+    margin: 0;
+    display: flex;
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -.01em;
+    transform: translateY(-50%);
+  }
+  .titel span { display: inline-block; }
+  .titel .aussen {
+    color: var(--blau);
+  }
+  .titel .innen {
+    color: #ffffff;
+    -webkit-text-stroke: 2.5px var(--blau);
+    paint-order: stroke fill;
+  }
+
+  /* Schieberegler Mann / Frau */
+  .regler {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin: 0 0 32px;
+    padding: 4px;
+    border: 0;
+    border-radius: 12px;
+    background: var(--bg);
+    box-shadow: inset 0 0 0 1px var(--linie);
+  }
+  .regler legend {
+    position: absolute;
+    width: 1px; height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+  .regler input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .regler label {
+    position: relative;
+    z-index: 1;
+    padding: 10px 0;
+    text-align: center;
+    font-weight: 500;
+    color: var(--leise);
+    cursor: pointer;
+    transition: color .2s;
+  }
+  .regler input:checked + label {
+    color: var(--text);
+    font-weight: 700;
+  }
+  .regler input:focus-visible + label {
+    outline: 2px solid var(--blau);
+    outline-offset: -2px;
+    border-radius: 9px;
+  }
+  .regler .knopf {
+    position: absolute;
+    top: 4px; bottom: 4px; left: 4px;
+    width: calc(50% - 4px);
+    border-radius: 9px;
+    background: var(--flaeche);
+    box-shadow: 0 1px 3px rgba(0,0,0,.12), 0 0 0 1px var(--linie);
+    transition: transform .25s ease;
+  }
+  .regler:has(#frau:checked) .knopf { transform: translateX(100%); }
+
+  .ausgabe {
+    min-height: 140px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-left: 3px solid var(--blau);
+    padding: 4px 0 4px 20px;
+    margin-bottom: 32px;
+  }
+  .ausdruck {
+    margin: 0;
+    font-size: clamp(2rem, 8vw, 3rem);
+    font-weight: 800;
+    line-height: 1.08;
+    letter-spacing: -.03em;
+    overflow-wrap: anywhere;
+  }
+  .ausdruck.leer { color: var(--linie); }
+  .ausdruck.neu { animation: rein .3s ease-out; }
+  @keyframes rein {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: none; }
+  }
+  .preissn {
+    margin: 10px 0 0;
+    font-size: .9rem;
+    color: var(--leise);
+  }
+
+  button {
+    font: inherit;
+    font-weight: 700;
+    border: 0;
+    border-radius: 12px;
+    cursor: pointer;
+  }
+  button:focus-visible {
+    outline: 2px solid var(--blau);
+    outline-offset: 2px;
+  }
+  .los {
+    width: 100%;
+    padding: 14px 24px;
+    background: var(--blau);
+    color: var(--auf-blau);
+    transition: background .15s, transform .1s;
+  }
+  .los:hover { background: var(--blau-hover); }
+  .los:active { transform: scale(.98); }
+
+  .kopiern {
+    margin-top: 14px;
+    padding: 0;
+    background: none;
+    font-weight: 500;
+    font-size: .875rem;
+    color: var(--blau);
+  }
+  .kopiern[hidden] { display: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ausdruck.neu { animation: none; }
+    .los, .regler .knopf, .regler label { transition: none; }
+  }
+  @media (max-width: 420px) {
+    .karte { padding: 64px 20px 24px; }
+    .titel { left: 20px; }
+  }
+</style>
+</head>
+<body>
+  <main class="karte">
+    <h1 class="titel" aria-label="Grippl"><span class="aussen">G</span><span class="innen">r</span><span class="aussen">i</span><span class="innen">p</span><span class="aussen">p</span><span class="innen">l</span></h1>
+
+    <fieldset class="regler">
+      <legend>Schimpfwort für</legend>
+      <span class="knopf" aria-hidden="true"></span>
+      <input type="radio" name="fuer" id="mann" value="m" checked>
+      <label for="mann">Mann</label>
+      <input type="radio" name="fuer" id="frau" value="w">
+      <label for="frau">Frau</label>
+    </fieldset>
+
+    <div class="ausgabe" aria-live="polite">
+      <p id="ausdruck" class="ausdruck leer">Grantla</p>
+      <p id="preissn" class="preissn">Druck auf'n Knopf.</p>
+      <div class="aktionen">
+        <button id="kopiern" class="kopiern" type="button" hidden>Kopiern</button>
+        <button id="teilen" class="kopiern" type="button" hidden>Teilen</button>
+      </div>
+    </div>
+
+    <button id="los" class="los" type="button">Schimpf!</button>
+  </main>
+
+<script>
+  // Eigenschaftswörter: Stamm + Endung je nach Geschlecht (m: -a, w: -e, s: -s)
+  const adjektive = [
+    ["damisch", "dämlich"],
+    ["bläd", "blöd"],
+    ["greislich", "scheußlich"],
+    ["hinterfotzig", "hinterhältig"],
+    ["gscheart", "ungehobelt"],
+    ["narrisch", "verrückt"],
+    ["schiach", "hässlich"],
+    ["letschert", "lasch"],
+    ["gwampert", "dickbäuchig"],
+    ["zaundürr", "spindeldürr"],
+    ["ausgschamt", "unverschämt"],
+    ["grantig", "schlecht gelaunt"],
+    ["neidig", "neidisch"],
+    ["hirnrissig", "hirnverbrannt"],
+    ["rotzfrech", "frech"],
+    ["verzogn", "unerzogen"],
+    ["bsuffn", "betrunken"],
+    ["oglatscht", "ungepflegt"],
+    ["gschleckt", "geschniegelt"],
+    ["gschupft", "überspannt"],
+  ];
+
+  // Hauptwörter mit Geschlecht und Übersetzung
+  const hauptwoerter = [
+    ["Depp", "m", "Dummkopf"],
+    ["Hirnbaatzl", "m", "Hirnloser"],
+    ["Grattler", "m", "Habenichts"],
+    ["Bazi", "m", "Schlitzohr"],
+    ["Haumdaucher", "m", "Rüpel"],
+    ["Hornochs", "m", "Hornochse"],
+    ["Schofsbeidl", "m", "Trottel"],
+    ["Lackl", "m", "grober Kerl"],
+    ["Doldi", "m", "Trottel"],
+    ["Hanswurscht", "m", "Hanswurst"],
+    ["Dampfplauderer", "m", "Schwätzer"],
+    ["Gschaftlhuaba", "m", "Wichtigtuer"],
+    ["Saubeidl", "m", "Mistkerl"],
+    ["Rotzleffe", "m", "Rotzlöffel"],
+    ["Bierdimpfe", "m", "Biertrinker ohne Hirn"],
+    ["Hammeldepp", "m", "Volltrottel"],
+    ["Krautschädl", "m", "Dickkopf"],
+    ["Simpe", "m", "Einfaltspinsel"],
+    ["Zwiderwurzn", "w", "Griesgram"],
+    ["Ratschkathl", "w", "Tratschtante"],
+    ["Bissgurkn", "w", "zänkische Person"],
+    ["Funsn", "w", "eingebildete Ziege"],
+    ["Trutschn", "w", "Trampel"],
+    ["Schnepfn", "w", "dumme Gans"],
+    ["Hupfdohln", "w", "Zappelphilipp"],
+    ["Sumpfbiaschn", "w", "Kneipenhocker"],
+    ["Urschl", "w", "einfältige Frau"],
+    ["Goaß", "w", "Ziege"],
+    ["Kuah", "w", "Kuh"],
+    ["Gurkn", "w", "dumme Gurke"],
+    ["Ratschn", "w", "Tratschweib"],
+    ["Rindviech", "s", "Rindvieh"],
+    ["Gscheidhaferl", "s", "Besserwisser"],
+    ["Mistviech", "s", "Mistvieh"],
+    ["Krischperl", "s", "Schwächling"],
+    ["Hascherl", "s", "armes Würstchen"],
+    ["Fleischpflanzerl", "s", "Frikadelle"],
+    ["Oaschgsicht", "s", "Arschgesicht"],
+    ["Bürscherl", "s", "Bürschchen", "m"], // sächlich, aber nur für Mannsbilder
+  ];
+
+  const endung = { m: "a", w: "e", s: "s" };
+
+  const zufall = (liste) => liste[Math.floor(Math.random() * liste.length)];
+
+  const ausdruckEl = document.getElementById("ausdruck");
+  const preissnEl = document.getElementById("preissn");
+  const kopiernEl = document.getElementById("kopiern");
+  const teilenEl = document.getElementById("teilen");
+  let letzteUebersetzung = "";
+  let letzter = "";
+
+  function schimpf() {
+    // Nur Wörter fürs gewählte Geschlecht; sächliche (Rindviech …) passen für beide
+    const fuer = document.querySelector('input[name="fuer"]:checked').value;
+    const auswahl = hauptwoerter.filter(([, g, , nur]) => g === fuer || (g === "s" && (!nur || nur === fuer)));
+    let ausdruck, adj, wort;
+    do {
+      adj = zufall(adjektive);
+      wort = zufall(auswahl);
+      ausdruck = `${adj[0]}${endung[wort[1]]} ${wort[0]}`;
+    } while (ausdruck === letzter);
+    letzter = ausdruck;
+
+    // Großschreibung am Anfang
+    ausdruckEl.textContent = ausdruck[0].toUpperCase() + ausdruck.slice(1);
+    ausdruckEl.classList.remove("leer", "neu");
+    void ausdruckEl.offsetWidth; // Animation neu starten
+    ausdruckEl.classList.add("neu");
+
+    letzteUebersetzung = `${adj[1]} + ${wort[2]}`;
+    preissnEl.textContent = `preißisch: ${letzteUebersetzung}`;
+    kopiernEl.hidden = false;
+    kopiernEl.textContent = "Kopiern";
+    teilenEl.hidden = !navigator.share;
+  }
+
+  document.getElementById("los").addEventListener("click", schimpf);
+
+  // Beim Umschalten gleich a passends Wort zeigen, wenn scho oans dasteht
+  document.querySelectorAll('input[name="fuer"]').forEach((r) =>
+    r.addEventListener("change", () => { if (letzter) schimpf(); })
+  );
+
+  // Teilen über das iPhone-Menü (WhatsApp, Nachrichten …)
+  teilenEl.addEventListener("click", async () => {
+    try {
+      await navigator.share({ text: `${ausdruckEl.textContent} 🥨 (preißisch: ${letzteUebersetzung})` });
+    } catch { /* abgebrochen */ }
+  });
+
+  // Offline-Fähigkeit (nur über http/https, nicht bei file://)
+  if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+    navigator.serviceWorker.register("sw.js");
+  }
+
+  kopiernEl.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(ausdruckEl.textContent);
+      kopiernEl.textContent = "Kopiert ✓";
+    } catch {
+      kopiernEl.textContent = "Ging ned – bitte händisch markiern";
+    }
+  });
+</script>
+</body>
+</html>
