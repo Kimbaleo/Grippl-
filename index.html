@@ -56,6 +56,59 @@
     padding: 40px 32px 32px;
   }
 
+  /* Schieberegler Mann / Frau */
+  .regler {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin: 0 0 32px;
+    padding: 4px;
+    border: 0;
+    border-radius: 12px;
+    background: var(--bg);
+    box-shadow: inset 0 0 0 1px var(--linie);
+  }
+  .regler legend {
+    position: absolute;
+    width: 1px; height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+  .regler input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .regler label {
+    position: relative;
+    z-index: 1;
+    padding: 10px 0;
+    text-align: center;
+    font-weight: 500;
+    color: var(--leise);
+    cursor: pointer;
+    transition: color .2s;
+  }
+  .regler input:checked + label {
+    color: var(--text);
+    font-weight: 700;
+  }
+  .regler input:focus-visible + label {
+    outline: 2px solid var(--blau);
+    outline-offset: -2px;
+    border-radius: 9px;
+  }
+  .regler .knopf {
+    position: absolute;
+    top: 4px; bottom: 4px; left: 4px;
+    width: calc(50% - 4px);
+    border-radius: 9px;
+    background: var(--flaeche);
+    box-shadow: 0 1px 3px rgba(0,0,0,.12), 0 0 0 1px var(--linie);
+    transition: transform .25s ease;
+  }
+  .regler:has(#frau:checked) .knopf { transform: translateX(100%); }
+
   .ausgabe {
     min-height: 140px;
     display: flex;
@@ -118,7 +171,7 @@
 
   @media (prefers-reduced-motion: reduce) {
     .ausdruck.neu { animation: none; }
-    .los { transition: none; }
+    .los, .regler .knopf, .regler label { transition: none; }
   }
   @media (max-width: 420px) {
     .karte { padding: 28px 20px 24px; }
@@ -127,6 +180,15 @@
 </head>
 <body>
   <main class="karte">
+    <fieldset class="regler">
+      <legend>Schimpfwort für</legend>
+      <span class="knopf" aria-hidden="true"></span>
+      <input type="radio" name="fuer" id="mann" value="m" checked>
+      <label for="mann">Mann</label>
+      <input type="radio" name="fuer" id="frau" value="w">
+      <label for="frau">Frau</label>
+    </fieldset>
+
     <div class="ausgabe" aria-live="polite">
       <p id="ausdruck" class="ausdruck leer">Grantla</p>
       <p id="preissn" class="preissn">Druck auf'n Knopf.</p>
@@ -189,6 +251,11 @@
     ["Schnepfn", "w", "dumme Gans"],
     ["Hupfdohln", "w", "Zappelphilipp"],
     ["Sumpfbiaschn", "w", "Kneipenhocker"],
+    ["Urschl", "w", "einfältige Frau"],
+    ["Goaß", "w", "Ziege"],
+    ["Kuah", "w", "Kuh"],
+    ["Gurkn", "w", "dumme Gurke"],
+    ["Ratschn", "w", "Tratschweib"],
     ["Rindviech", "s", "Rindvieh"],
     ["Gscheidhaferl", "s", "Besserwisser"],
     ["Mistviech", "s", "Mistvieh"],
@@ -196,7 +263,7 @@
     ["Hascherl", "s", "armes Würstchen"],
     ["Fleischpflanzerl", "s", "Frikadelle"],
     ["Oaschgsicht", "s", "Arschgesicht"],
-    ["Bürscherl", "s", "Bürschchen"],
+    ["Bürscherl", "s", "Bürschchen", "m"], // sächlich, aber nur für Mannsbilder
   ];
 
   const endung = { m: "a", w: "e", s: "s" };
@@ -209,10 +276,13 @@
   let letzter = "";
 
   function schimpf() {
+    // Nur Wörter fürs gewählte Geschlecht; sächliche (Rindviech …) passen für beide
+    const fuer = document.querySelector('input[name="fuer"]:checked').value;
+    const auswahl = hauptwoerter.filter(([, g, , nur]) => g === fuer || (g === "s" && (!nur || nur === fuer)));
     let ausdruck, adj, wort;
     do {
       adj = zufall(adjektive);
-      wort = zufall(hauptwoerter);
+      wort = zufall(auswahl);
       ausdruck = `${adj[0]}${endung[wort[1]]} ${wort[0]}`;
     } while (ausdruck === letzter);
     letzter = ausdruck;
@@ -229,6 +299,11 @@
   }
 
   document.getElementById("los").addEventListener("click", schimpf);
+
+  // Beim Umschalten gleich a passends Wort zeigen, wenn scho oans dasteht
+  document.querySelectorAll('input[name="fuer"]').forEach((r) =>
+    r.addEventListener("change", () => { if (letzter) schimpf(); })
+  );
 
   kopiernEl.addEventListener("click", async () => {
     try {
