@@ -47,10 +47,17 @@
 			);
 			target = DBA537DCBC49E10DF537388E /* GripplWidgetExtension */;
 		};
+		58BB4338C34E07263D1BF69E /* Exceptions for "Grippl" folder in "Grippl" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 1C4DFE9B274E094D507BDD87 /* Grippl */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		EB87B830A692D5585C0BA1F7 /* Grippl */ = {isa = PBXFileSystemSynchronizedRootGroup; path = Grippl; sourceTree = "<group>"; };
+		EB87B830A692D5585C0BA1F7 /* Grippl */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (58BB4338C34E07263D1BF69E /* Exceptions for "Grippl" folder in "Grippl" target */, ); path = Grippl; sourceTree = "<group>"; };
 		18084E57E48B8346A8C4CE7C /* GripplWidget */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (81B0D100066DC63C0FA45AF2 /* Exceptions for "GripplWidget" folder in "GripplWidgetExtension" target */, ); path = GripplWidget; sourceTree = "<group>"; };
 		C6541AAE3A601A8A9EB0390F /* Shared */ = {isa = PBXFileSystemSynchronizedRootGroup; path = Shared; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -295,6 +302,7 @@
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Grippl/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Grippl;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -324,6 +332,7 @@
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Grippl/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Grippl;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

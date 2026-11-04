@@ -27,6 +27,7 @@ Hunderte Kombinationen, grammatikalisch passend für Mann oder Frau.
 • Für Mann oder Frau – die Endungen passen sich an
 • Preißische Übersetzung zu jedem Wort
 • Vorlesen lassen
+• Action-Button: lang drücken – und Grippl schimpft sofort laut los
 • Merken, kopieren und teilen – auch als Bild
 • Widget „Schimpfwort des Tages“ für Home- und Sperrbildschirm
 • Hell- und Dunkelmodus
@@ -72,6 +73,12 @@ Grippl is a humorous Bavarian dialect app. It generates playful Bavarian insults
 Features: male/female word forms, text-to-speech, favorites stored on-device,
 sharing as text or image, and a "word of the day" widget for home and lock screen.
 No account, no network access, no data collection.
+
+Background audio: the App Shortcut "Schimpf!" (usable via Action button, Shortcuts
+and Siri) generates a word and reads it aloud with AVSpeechSynthesizer without opening
+the app. The audio background mode is required so this speech output is audible while
+the intent runs in the background. To test: run the app once, then in the Shortcuts app
+run "Schimpf!" from Grippl.
 ```
 
 ## Screenshots

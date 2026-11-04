@@ -68,6 +68,17 @@ Haptik und a Widget „Schimpfwort des Tages“ für Home- und Sperrbildschirm.
 
 Mit kostenlosem Konto läuft die App **7 Tage**, danach einfach erneut mit ▶︎ aufspielen.
 
+### Action-Button belegen (ab iPhone 15 Pro)
+
+Lang drücken → sofort a Schimpfwort, laut vorgelesen, ohne dass die App aufgeht.
+
+1. Grippl **einmal öffnen** (dann kennt das iPhone die Aktion).
+2. **Einstellungen → Action-Taste** → seitlich wischen bis **„Kurzbefehl“**.
+3. **„Kurzbefehl auswählen“** → unter den Apps **Grippl** → **„Schimpf!“**.
+
+Es gilt die in der App eingestellte Auswahl **Mann/Frau**. Die gleiche Aktion gibt's
+auch in der Kurzbefehle-App, in Spotlight und per Siri („Schimpf mit Grippl“).
+
 ### Im App Store veröffentlichen
 
 1. Beim **Apple Developer Program** anmelden (99 €/Jahr): developer.apple.com/programs
