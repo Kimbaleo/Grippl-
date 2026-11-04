@@ -27,6 +27,7 @@ Hunderte Kombinationen, grammatikalisch passend für Mann oder Frau.
 • Für Mann oder Frau – die Endungen passen sich an
 • Preißische Übersetzung zu jedem Wort
 • Vorlesen lassen
+• iPhone quer drehen: Schimpfwort bildschirmfüllend – zum Herzeigen
 • Action-Button: lang drücken – und Grippl schimpft sofort laut los
 • Merken, kopieren und teilen – auch als Bild
 • Widget „Schimpfwort des Tages“ für Home- und Sperrbildschirm

@@ -10,7 +10,65 @@ struct ContentView: View {
     @State private var kopiert = false
     @State private var zeigeFavoriten = false
 
+    /// iPhone quer gedreht (Höhe „compact“) → Vollbild nur mit dem Schimpfwort.
+    @Environment(\.verticalSizeClass) private var hoehenKlasse
+    private var querformat: Bool { hoehenKlasse == .compact }
+
     var body: some View {
+        Group {
+            if querformat {
+                vollbild
+            } else {
+                hochformat
+            }
+        }
+        .tint(Color.gripplBlau)
+        .beiSchuetteln { neu() }
+        .sensoryFeedback(.impact(weight: .medium), trigger: aktuell)
+        .onChange(of: geschlecht) {
+            if aktuell != nil { neu() }
+        }
+        // Beim Drehen ohne vorhandenes Wort gleich eins erzeugen
+        .onChange(of: querformat) {
+            if querformat && aktuell == nil { neu() }
+        }
+        .onAppear {
+            if querformat && aktuell == nil { neu() }
+        }
+    }
+
+    // MARK: - Querformat: nur das Schimpfwort, bildschirmfüllend
+
+    private var vollbild: some View {
+        ZStack {
+            Color.gripplHintergrund.ignoresSafeArea()
+
+            if let s = aktuell {
+                Text(s.text)
+                    .font(.system(size: 220, weight: .heavy))
+                    .tracking(-2)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.1)
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(Color.primary)
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 12)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .id(s.text)
+                    .transition(.opacity)
+                    .accessibilityHint("Tippen für a neues Schimpfwort")
+            }
+        }
+        // Tippen irgendwo erzeugt ein neues Wort (Schütteln geht auch)
+        .contentShape(Rectangle())
+        .onTapGesture { neu() }
+        .statusBarHidden(true)
+        .persistentSystemOverlays(.hidden)
+    }
+
+    // MARK: - Hochformat
+
+    private var hochformat: some View {
         NavigationStack {
             ZStack {
                 Color.gripplHintergrund.ignoresSafeArea()
@@ -38,12 +96,6 @@ struct ContentView: View {
             .sheet(isPresented: $zeigeFavoriten) {
                 FavoritenView()
             }
-        }
-        .tint(Color.gripplBlau)
-        .beiSchuetteln { neu() }
-        .sensoryFeedback(.impact(weight: .medium), trigger: aktuell)
-        .onChange(of: geschlecht) {
-            if aktuell != nil { neu() }
         }
     }
 

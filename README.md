@@ -42,7 +42,7 @@ Dateien dafür: `manifest.webmanifest` (App-Name, Farben, Icons), `sw.js`
 ## Echte iPhone-App (Ordner `ios/`)
 
 Im Ordner `ios/` liegt Grippl als native iPhone-App (Swift/SwiftUI) mit Extras:
-Schütteln für a neues Wort, Vorlesen, Merken (Favoriten), Teilen als Text oder Bild,
+Schütteln für a neues Wort, Querformat-Vollbild (iPhone drehen → nur des Schimpfwort, riesig), Vorlesen, Merken (Favoriten), Teilen als Text oder Bild,
 Haptik und a Widget „Schimpfwort des Tages“ für Home- und Sperrbildschirm.
 
 **Voraussetzungen:** Mac mit **Xcode 16 oder neuer** (kostenlos im Mac App Store), iPhone mit **iOS 17 oder neuer**.
